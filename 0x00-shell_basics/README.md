@@ -1,0 +1,1 @@
+pwd - prints absolute path
