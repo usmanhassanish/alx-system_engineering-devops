@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -Rla1 | sort 
+ls -Rla -1 | sort 
