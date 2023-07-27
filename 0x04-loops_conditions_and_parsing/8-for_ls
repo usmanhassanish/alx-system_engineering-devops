@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#list files in a directory starting from the dash in front
+
+for file in * 
+do
+    if [[ -f "$file" && ! "$file" =~ ^\. ]]
+    then
+        filename="${file#*-}"
+        echo "$filename"
+    fi
+done
+
