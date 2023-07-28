@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# get  process id's with the word bash
+# shellcheck disable=SC2009
+
+process_list=$(ps aux | grep -i bash)
+
+echo "$process_list"
