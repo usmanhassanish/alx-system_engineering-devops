@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# show all available ipv4 addresses
+
+echo $(hostname -I) "127.0.0.1" | tr ' ' '\n'

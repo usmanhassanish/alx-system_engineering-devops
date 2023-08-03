@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# show listening sockets
+
+if [[ $(id -u) -ne 0 ]]; then
+    echo "Please run the script as root or using sudo."
+    exit 1
+fi
+
+# Get listening sockets and their PIDs using netstat
+listening_sockets=$(netstat -tlnp 2>/dev/null | grep LISTEN)
+
+# Display the header
+echo -e "Active Internet connections (only servers)"
+echo -e "Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name"
+
+# Loop through each listening socket
+while read -r line; do
+    # Extract the protocol, local address, foreign address, state, PID, and program name from the line
+    proto=$(echo "$line" | awk '{print $1}')
+    local_address=$(echo "$line" | awk '{print $4}')
+    foreign_address=$(echo "$line" | awk '{print $5}')
+    state=$(echo "$line" | awk '{print $6}')
+    pid=$(echo "$line" | awk '{print $7}' | awk -F "/" '{print $1}')
+    program=$(echo "$line" | awk '{print $7}' | awk -F "/" '{print $2}')
+
+    # Display the information
+    printf "%-7s %-7s %-7s %-23s %-23s %-11s %-15s\n" "$proto" "0" "0" "$local_address" "$foreign_address" "$state" "$pid/$program"
+done <<< "$listening_sockets"
+
+# Display the Active UNIX domain sockets header
+echo -e "\nActive UNIX domain sockets (only servers)"
+echo -e "Proto RefCnt Flags       Type       State         I-Node   PID/Program name    Path"
+
+# Get listening UNIX domain sockets and their PIDs using lsof
+listening_unix_sockets=$(lsof -U | grep LISTEN)
+
+# Loop through each listening UNIX domain socket
+while read -r line; do
+    # Extract the protocol, reference count, flags, type, state, I-Node, PID, and program name from the line
+    proto="unix"
+    refcnt=$(echo "$line" | awk '{print $2}')
+    flags=$(echo "$line" | awk '{print $3}')
+    type=$(echo "$line" | awk '{print $4}')
+    state="LISTENING"
+    inode=$(echo "$line" | awk '{print $7}')
+    pid=$(echo "$line" | awk '{print $8}')
+    program=$(echo "$line" | awk '{print $9}')
+
+    # Display the information
+    printf "%-7s %-7s %-11s %-11s %-13s %-8s %-18s %-15s\n" "$proto" "$refcnt" "$flags" "$type" "$state" "$inode" "$pid/$program"
+done <<< "$listening_unix_sockets"
