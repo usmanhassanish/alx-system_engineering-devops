@@ -2,7 +2,7 @@
 # pings an ip-address five times
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 {IP_ADDRESS}"
+    echo "Usage: $(basename "$0") {IP_ADDRESS}"
     exit 1
 fi
 
