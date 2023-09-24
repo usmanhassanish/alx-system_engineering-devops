@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Name of the private key file
+private_key_file="school"
+
+# Number of bits in the RSA key
+key_bits=4096
+
+# Passphrase for the private key
+passphrase="betty"
+
+# Generate the RSA key pair
+openssl genpkey -algorithm RSA -out "$private_key_file.pem" -aes256 -pass pass:"$passphrase" -aes256 -paramfile <(openssl genpkey -algorithm RSA -out /dev/stdout -pass pass:"$passphrase" -aes256 -paramfile <(openssl genpkey -algorithm RSA -out /dev/stdout -pass pass:"$passphrase" -aes256 -paramfile <(openssl genpkey -algorithm RSA -out /dev/stdout -pass pass:"$passphrase" -aes256 -paramfile /dev/stdin))
+
+# Extract the public key from the private key
+openssl rsa -pubout -in "$private_key_file.pem" -out "$private_key_file.pub.pem"
+
+# Remove the intermediate private key files
+rm "$private_key_file.pem"
