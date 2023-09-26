@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# Update the package list and install Nginx
+apt update
+apt install nginx -y
+
+# Configure Nginx to listen on port 80 and return "Hello World!"
+cat <<EOL | sudo tee /etc/nginx/sites-available/hello-world
+server {
+    listen 80;
+    server_name localhost;
+
+    location / {
+        return 200 "Hello World!";
+    }
+}
+EOL
+
+# Create a symbolic link to enable the site
+ln -s /etc/nginx/sites-available/hello-world /etc/nginx/sites-enabled/
+
+# Test the Nginx configuration for syntax errors
+nginx -t
+
+# If the test is successful, reload Nginx to apply the changes
+if [ $? -eq 0 ]; then
+    sudo systemctl reload nginx
+    echo "Nginx configured successfully."
+else
+    echo "Nginx configuration test failed. Please check your configuration."
+fi
